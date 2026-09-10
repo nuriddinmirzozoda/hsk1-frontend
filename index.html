@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>HSK 1 — Платформаи омӯзиши забони хитоӣ</title>
+<meta name="description" content="Омӯзиши бепули забони хитоӣ HSK 1 бо забони тоҷикӣ. Луғатҳо, тестҳо, флешкартаҳо ва сертификати расмӣ.">
+<meta name="keywords" content="HSK1, забони хитоӣ, китоби хитоӣ, таджикский китайский, HSK 1 тоҷикӣ">
+<meta name="robots" content="index, follow">
+
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#B23A2E">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="masthead">
+    <div>
+      <h1 id="siteTitle">HSK 1 — курси хитоӣ</h1>
+      <div class="zh">中文 · 塔吉克语</div>
+    </div>
+    <button class="authbtn" id="authBtn" onclick="openAuthScreen()">Воридшавӣ</button>
+    <div class="stat">
+      <div class="num" id="progNum">1/15</div>
+      <div class="lbl" id="progPct">Дарс гузашта</div>
+    </div>
+  </div>
+
+  <div class="progressbar"><div class="fill" id="progFill"></div></div>
+
+  <div class="toolbar" id="toolbar">
+    <button class="toolbtn active" id="tabPath" onclick="showView('path')">Дарсҳо</button>
+    <button class="toolbtn" id="tabBasics" onclick="showView('basics')">Асосҳои Пиньин</button>
+    <button class="toolbtn" id="tabFlash" onclick="showView('flashcards')">Флешкартаҳо</button>
+    <button class="toolbtn" id="tabDict" onclick="showView('dictionary')">Луғати ман</button>
+    <button class="toolbtn" id="tabGame" onclick="showView('game')">Бозӣ</button>
+    <button class="toolbtn" id="tabExam" onclick="showView('exam')">Тести ниҳоӣ</button>
+    <button class="toolbtn" id="tabCert" onclick="downloadCertificate()">🎓 Сертификат</button>
+    <label class="speedctrl">🔊
+      <select id="speedSelect" onchange="setVoiceSpeed(this.value)">
+        <option value="0.6">Хеле оҳиста</option>
+        <option value="0.75">Оҳиста</option>
+        <option value="0.85" selected>Муқаррарӣ</option>
+        <option value="1">Тез</option>
+        <option value="1.25">Хеле тез</option>
+      </select>
+    </label>
+    <button class="toolbtn darktoggle" id="darkBtn" onclick="toggleDark()">🌙 Торик</button>
+  </div>
+
+  <div class="path" id="path"></div>
+
+  <div class="panel" id="panel"></div>
+
+  <div class="sitefooter">
+    <div class="sitefooter-inner">
+      <div class="sitefooter-zh">谢谢学习</div>
+      <div class="sitefooter-text">
+        HSK1 — курси хитоӣ барои забони тоҷикӣ · Сохта шудааст аз ҷониби <b>Мирзозода Нуриддин</b>, донишҷӯи Донишгоҳи давлатии тиҷорати Тоҷикистон
+      </div>
+      <div class="sitefooter-links">
+        <a href="mailto:mirzozoda272@gmail.com">✉️ mirzozoda272@gmail.com</a>
+        <a href="https://t.me/miiirzozodaa" target="_blank" rel="noopener">✈️ Telegram: @miiirzozodaa</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Auth modal (login / register sliding card) ===== -->
+<div class="auth-modal-overlay" id="authModalOverlay">
+  <button class="auth-close" id="authClose" onclick="closeAuthScreen()">&times;</button>
+  <div class="auth-card" id="authCard">
+
+    <!-- Формаи воридшавӣ -->
+    <div class="auth-form-panel auth-signin">
+      <form id="signinForm">
+        <h2>Воридшавӣ</h2>
+        <div class="auth-social"><span>G</span><span>f</span><span>⌥</span><span>in</span></div>
+        <p class="auth-sub">Воридшавӣ бо почта ва парол</p>
+        <input type="email" id="loginEmail" placeholder="Почтаи электронӣ" required>
+        <input type="password" id="loginPassword" placeholder="Парол" required>
+        <a href="#" class="auth-forgot">Паролро фаромӯш кардед?</a>
+        <button type="submit" class="auth-btn">Воридшавӣ</button>
+        <div class="auth-msg" id="signinMsg"></div>
+      </form>
+    </div>
+
+    <!-- Формаи сабти ном бо коди тасдиқ -->
+    <div class="auth-form-panel auth-signup">
+      <form id="signupForm">
+        <h2>Аккаунти нав созед</h2>
+        <div class="auth-social"><span>G</span><span>f</span><span>⌥</span><span>in</span></div>
+        <p class="auth-sub">Сабти ном бо почта ва коди OTP</p>
+        
+        <input type="text" id="regName" placeholder="Ном" required>
+        <input type="email" id="regEmail" placeholder="Почтаи электронӣ" required>
+        <input type="password" id="regPassword" placeholder="Парол (ҳадди ақал 6 ҳарф)" required>
+        
+        <!-- Майдони коди тасдиқ (баъди пахши тугма пайдо мешавад) -->
+        <div id="codeStep" style="display: none; margin-top: 10px;">
+          <input type="text" id="regCode" placeholder="Коди 6-рақама аз почта">
+        </div>
+
+        <button type="button" id="sendCodeBtn" class="auth-btn" onclick="handleSendCode()">Гирифтани код</button>
+        <button type="submit" id="verifyBtn" class="auth-btn" style="display: none; margin-top: 10px;">Тасдиқ ва Сабти ном</button>
+
+        <div class="auth-msg" id="signupMsg"></div>
+      </form>
+    </div>
+
+    <div class="auth-overlay-container">
+      <div class="auth-overlay-panel">
+        <div class="auth-overlay-left">
+          <div class="auth-zh">你好</div>
+          <h2>Хуш омадед!</h2>
+          <p>Барои идома додани дарсҳо бо аккаунти худ ворид шавед.</p>
+          <button class="auth-btn ghost" id="toSignIn">Воридшавӣ</button>
+        </div>
+        <div class="auth-overlay-right">
+          <div class="auth-zh">再见</div>
+          <h2>Аккаунт надоред?</h2>
+          <p>Сабти ном кунед, то пешрафти худро гум накунед.</p>
+          <button class="auth-btn ghost" id="toSignUp">Сабти ном</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3/dist/hanzi-writer.min.js"></script>
+<script src="script.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
